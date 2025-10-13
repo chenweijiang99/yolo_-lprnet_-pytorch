@@ -1,0 +1,23 @@
+# YOLOv8配置文件 - 车牌检测
+
+# 数据集配置
+train: ./train/images/train  # 训练集图像路径
+val: ./train/images/val      # 验证集图像路径
+
+# 类别配置
+names:
+  0: license_plate
+
+# 模型配置
+nc: 1  # 类别数量
+width: 640  # 输入图像宽度
+height: 640  # 输入图像高度
+
+# 训练参数
+batch: 16  # 批次大小
+epochs: 100  # 训练轮数
+imgsz: [640, 640]  # 图像大小
+optimizer: SGD  # 优化器
+lr0: 0.01  # 初始学习率
+weight_decay: 0.0005  # 权重衰减
+momentum: 0.937  # 动量
