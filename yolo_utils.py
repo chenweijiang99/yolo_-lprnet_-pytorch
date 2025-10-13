@@ -71,10 +71,28 @@ class YOLOPlateDetector:
                     if return_image:
                         # 绘制边界框
                         cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-                        # 绘制置信度
+                        # 绘制置信度，使用PIL支持中文显示
                         label = f"车牌: {conf:.2f}"
-                        cv2.putText(img, label, (int(x1), int(y1) - 10), 
-                                   cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                        try:
+                            from PIL import Image, ImageDraw, ImageFont
+                            # 将OpenCV图像转换为PIL图像
+                            img_pil = Image.fromarray(cv2.cvtColor(img, cv2.COLOR_BGR2RGB))
+                            draw = ImageDraw.Draw(img_pil)
+                            # 尝试加载中文字体
+                            try:
+                                # Windows系统默认字体
+                                font = ImageFont.truetype("simhei.ttf", 16)
+                            except:
+                                # 如果找不到指定字体，使用默认字体
+                                font = ImageFont.load_default()
+                            # 绘制文本
+                            draw.text((int(x1), int(y1) - 20), label, font=font, fill=(0, 255, 0))
+                            # 将PIL图像转换回OpenCV图像
+                            img = cv2.cvtColor(np.array(img_pil), cv2.COLOR_RGB2BGR)
+                        except:
+                            # 如果PIL不可用，回退到OpenCV绘制
+                            cv2.putText(img, label, (int(x1), int(y1) - 10), 
+                                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
         
         if return_image:
             return plates, img

@@ -83,7 +83,21 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 5 -
 
 训练完成后，模型权重将保存在`./runs/train/yolo_lpr/weights/`目录下。
 
-### 2. LPRNet字符识别模型训练
+### 2.YOLO模型测试
+
+```bash
+python test_yolo.py --model ./runs/train/yolo_lpr/weights/best.pt --input ./images/test.jpg
+```
+
+参数说明：
+- `--model`: 训练好的YOLO模型路径
+- `--input`: 输入图像或视频路径
+- `--conf`: 置信度阈值（默认0.5）
+- `--iou`: IoU阈值（默认0.45）
+- `--save`: 是否保存结果图像
+- `--no-display`: 是否不显示结果图像（默认False）
+
+### 3. LPRNet字符识别模型训练
 
 LPRNet的训练脚本已经存在于项目中，可以使用以下命令进行训练：
 
@@ -121,74 +135,3 @@ python test_LPRNet.py --pretrained_model ./weights/Final_LPRNet_model.pth --test
 ```bash
 python main.py
 ```
-
-## 技术说明
-
-### YOLO车牌检测
-
-- 使用ultralytics库实现的YOLOv8模型进行车牌区域检测
-- 支持实时检测和批量处理
-- 检测结果包含车牌位置和置信度
-
-### LPRNet字符识别
-
-- 采用端到端的LPRNet模型进行字符识别
-- 无需进行复杂的字符分割
-- 支持识别中文、字母和数字
-
-### 集成流程
-
-1. 使用YOLO模型检测输入图像中的车牌区域
-2. 从图像中裁剪出车牌区域
-3. 将裁剪出的车牌图像送入LPRNet进行字符识别
-4. 输出车牌位置和识别结果
-
-## 性能
-
-### LPRNet性能
-
-- 测试数据集包含蓝牌和绿牌
-- 测试图像数量为27320张
-- 模型大小仅为1.7M
-
-|  模型大小 | 测试准确率(%) | GTX 1060推理时间(ms) |
-| ------ | --------------------- | ---------------------- |
-|  1.7M  |         96.0+         |          0.5-          |
-
-## 注意事项
-
-1. 确保项目依赖已正确安装
-2. 训练前需要准备好CCPD数据集
-3. 首次训练时可能需要下载YOLO预训练权重
-4. 对于中文路径问题，项目已使用PIL库进行支持
-5. 模型在不同环境中的表现可能会有所差异，可通过调整参数进行优化
-
-## 常见问题
-
-### 1. 找不到模型文件
-确保模型路径正确，训练完成后YOLO模型默认保存在`./runs/train/yolo_lpr/weights/best.pt`
-
-### 2. 检测效果不佳
-可尝试调整`--conf_threshold`和`--iou_threshold`参数，或增加训练轮数
-
-### 3. 中文路径问题
-项目已使用PIL库替代cv2.imread来解决中文路径问题
-
-### 4. CUDA内存不足
-可尝试减小`--batch_size`或`--img_size`参数
-
-## 更新日志
-
-- 2023-XX-XX: 集成YOLOv8车牌检测
-- 2023-XX-XX: 添加CCPD数据集处理工具
-- 2023-XX-XX: 创建集成演示脚本
-
-## 参考资料
-
-1. [LPRNet: License Plate Recognition via Deep Neural Networks](https://arxiv.org/abs/1806.10447v1)
-2. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
-3. [Ultralytics YOLO官方文档](https://docs.ultralytics.com/)
-
-## 说明
-
-如果您觉得这个项目有用，请给我一个star，谢谢！
