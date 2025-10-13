@@ -383,7 +383,7 @@ class PlateRecognitionGUI(QMainWindow):
         try:
             # 尝试自动查找模型文件
             yolo_model_path = self.find_model_file(['./runs/train/yolo_lpr/weights/best.pt', './yolo11n.pt', './yolov8n.pt'])
-            lpr_model_path = self.find_model_file(['./weights/Final_LPRNet_model_20251012_150100.pth'])
+            lpr_model_path = self.find_model_file(['./weights/Final_LPRNet_model.pth'])
 
             # 初始化YOLO检测器
             self.detector = YOLOPlateDetector(yolo_model_path)
