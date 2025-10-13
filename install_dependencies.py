@@ -173,7 +173,7 @@ def install_dependencies():
             return False
     
     # 验证安装
-    required_packages = ["torch", "torchvision", "cv2", "numpy", "PIL", "ultralytics"]
+    required_packages = ["torch", "torchvision", "cv2", "numpy", "PIL", "ultralytics", "PySide6"]
     missing_packages = []
     
     for pkg in required_packages:
@@ -181,6 +181,8 @@ def install_dependencies():
             pkg_name = "cv2"
         elif pkg == "PIL":
             pkg_name = "PIL"
+        elif pkg == "PySide6":
+            pkg_name = "PySide6"
         else:
             pkg_name = pkg
         
@@ -222,8 +224,9 @@ def main():
     # 安装其他依赖
     if install_dependencies():
         print("\n依赖安装完成！")
-        print("现在您可以运行项目中的训练或测试脚本了。")
+        print("现在您可以运行项目中的训练、测试脚本或GUI界面了。")
         print("\n使用指南:")
+        print("- 运行GUI界面: python plate_recognition_gui.py")
         print("- 训练LPRNet: python train_LPRNet.py")
         print("- 测试LPRNet: python test_LPRNet.py")
         print("- 训练YOLO: python train_yolo.py")

@@ -28,7 +28,6 @@ class YOLOPlateDetector:
         self.model = YOLO(model_path)
         self.conf_threshold = conf_threshold
         self.iou_threshold = iou_threshold
-        print(f"成功加载YOLO模型: {model_path}")
     
     def detect_plates(self, image, return_image=False):
         """检测图像中的车牌区域

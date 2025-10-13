@@ -8,3 +8,4 @@ matplotlib>=3.3.0
 pandas>=1.1.0
 imutils>=0.5.4
 tqdm>=4.60.0
+PySide6>=6.3.0

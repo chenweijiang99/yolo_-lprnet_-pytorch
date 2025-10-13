@@ -1,4 +1,10 @@
+__pycache__
+
 data/CCPD
+data/__pycache__
+
+model/__pycache__
 
 runs
 train
+

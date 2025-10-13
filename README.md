@@ -110,6 +110,15 @@ python demo_integrated_lpr.py --yolo_model ./runs/train/yolo_lpr/weights/best.pt
 ```bash
 python test_LPRNet.py --pretrained_model ./weights/Final_LPRNet_model.pth --test_img_dirs ./data/test
 ```
+## UI界面
+
+项目提供了一个简单的用户界面，用于实时车牌识别。用户可以通过界面上传图像或开启摄像头进行实时检测。
+
+### 运行UI界面
+
+```bash
+python main.py
+```
 
 ## 技术说明
 
