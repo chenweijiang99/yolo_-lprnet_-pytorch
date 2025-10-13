@@ -56,7 +56,7 @@ python install_dependencies.py
 
 主要依赖包括：
 - torch >= 1.7.1 (PyTorch深度学习框架)
-- torchvision >= 0.8.0 (PyTorch视觉库)
+- torchvision >= 0.8.2 (PyTorch视觉库)
 - opencv-python >= 4.5.0 (图像处理)
 - numpy >= 1.19.0 (数值计算)
 - pillow >= 8.0.0 (图像处理，支持中文)

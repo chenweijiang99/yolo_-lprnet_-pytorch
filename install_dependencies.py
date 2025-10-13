@@ -150,9 +150,13 @@ def install_dependencies():
                 non_pytorch_deps.append(line)
         
         # 安装剩余的依赖
-        if non_pytorch_deps:
-            command = [sys.executable, "-m", "pip", "install"] + non_pytorch_deps
-            if not run_command(command, "安装其他依赖项"):
+    if non_pytorch_deps:
+        command = [sys.executable, "-m", "pip", "install"]
+        # 如果启用了清华源，添加镜像源
+        if USE_TUNA:
+            command.extend(["-i", "https://pypi.tuna.tsinghua.edu.cn/simple", "--trusted-host", "pypi.tuna.tsinghua.edu.cn"])
+        command.extend(non_pytorch_deps)
+        if not run_command(command, "安装其他依赖项"):
                 print("依赖项安装失败，退出")
                 return False
     else:
@@ -164,15 +168,22 @@ def install_dependencies():
             "pillow>=8.0.0",
             "ultralytics>=8.0.0",
             "matplotlib>=3.3.0",
-            "pandas>=1.1.0"
+            "pandas>=1.1.0",
+            "imutils>=0.5.4",
+            "tqdm>=4.60.0",
+            "PySide6>=6.3.0",
         ]
-        command = [sys.executable, "-m", "pip", "install"] + common_deps
+        command = [sys.executable, "-m", "pip", "install"]
+        # 如果启用了清华源，添加镜像源
+        if USE_TUNA:
+            command.extend(["-i", "https://pypi.tuna.tsinghua.edu.cn/simple", "--trusted-host", "pypi.tuna.tsinghua.edu.cn"])
+        command.extend(common_deps)
         if not run_command(command, "安装常用依赖项"):
             print("依赖项安装失败，退出")
             return False
     
     # 验证安装
-    required_packages = ["torch", "torchvision", "cv2", "numpy", "PIL", "ultralytics", "PySide6"]
+    required_packages = ["torch", "torchvision", "cv2", "numpy", "PIL", "ultralytics", "PySide6", "tqdm", "imutils"]
     missing_packages = []
     
     for pkg in required_packages:
@@ -182,6 +193,10 @@ def install_dependencies():
             pkg_name = "PIL"
         elif pkg == "PySide6":
             pkg_name = "PySide6"
+        elif pkg == "tqdm":
+            pkg_name = "tqdm"
+        elif pkg == "imutils":
+            pkg_name = "imutils"
         else:
             pkg_name = pkg
         
@@ -202,7 +217,11 @@ def main():
                         help='选择设备类型 (默认: 自动检测)')
     parser.add_argument('--force', action='store_true',
                         help='强制重新安装所有依赖')
+    parser.add_argument('--use-tuna', action='store_true', default=True,
+                        help='使用清华源镜像加速下载 (默认: True)')
     args = parser.parse_args()
+    
+    return args
     
     print("中文车牌识别系统依赖安装脚本")
     print(f"操作系统: {platform.system()} {platform.release()}")
@@ -229,11 +248,55 @@ def main():
         print("- 训练LPRNet: python train_LPRNet.py")
         print("- 测试LPRNet: python test_LPRNet.py")
         print("- 训练YOLO: python train_yolo.py")
+        print("- 测试YOLO: python test_yolo.py")
         return 0
     else:
         print("依赖安装失败，请检查错误信息并重试。")
         return 1
 
 
+def setup_environment():
+    """设置环境和依赖安装选项"""
+    args = main()
+    
+    print("中文车牌识别系统依赖安装脚本")
+    print(f"操作系统: {platform.system()} {platform.release()}")
+    print(f"Python版本: {platform.python_version()}")
+    print(f"使用清华源: {args.use_tuna}")
+    
+    if args.force:
+        print("强制重新安装所有依赖")
+    else:
+        print("仅安装缺失的依赖")
+    
+    # 全局变量，存储清华源设置
+    global USE_TUNA
+    USE_TUNA = args.use_tuna
+    
+    # 如果指定了设备类型，直接使用
+    if args.device != 'auto':
+        print(f"使用指定的设备类型: {args.device}")
+        if not install_pytorch(args.device):
+            print("PyTorch安装失败，退出")
+            return False
+    
+    # 安装其他依赖
+    if install_dependencies():
+        print("\n依赖安装完成！")
+        print("现在您可以运行项目中的训练、测试脚本或GUI界面了。")
+        print("\n使用指南:")
+        print("- 运行GUI界面: python main.py")
+        print("- 训练LPRNet: python train_LPRNet.py")
+        print("- 测试LPRNet: python test_LPRNet.py")
+        print("- 训练YOLO: python train_yolo.py")
+        print("- 测试YOLO: python test_yolo.py")
+        return 0
+    else:
+        print("依赖安装失败，请检查错误信息并重试。")
+        return 1
+
+# 全局变量
+USE_TUNA = True
+
 if __name__ == '__main__':
-    sys.exit(main())
+    sys.exit(setup_environment())
