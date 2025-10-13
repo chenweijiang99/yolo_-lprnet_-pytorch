@@ -37,13 +37,15 @@ python  install_dependencies.py
 
 主要依赖包括：
 - torch >= 1.8.0 (PyTorch深度学习框架)
+- torchvision >= 0.9.0 (PyTorch视觉库)
 - opencv-python >= 4.5.0 (图像处理)
 - numpy >= 1.19.0 (数值计算)
 - pillow >= 8.0.0 (图像处理，支持中文路径)
 - ultralytics >= 8.0.0 (YOLO模型实现)
 - matplotlib >= 3.3.0 (可视化)
 - pandas >= 1.1.0 (数据处理)
-
+- tqdm >= 4.60.0 (进度条)
+- PySide6 >= 6.4.0 (Qt6界面库)
 ## 数据集准备
 
 本项目使用CCPD（中国城市停车数据集）进行YOLO车牌检测模型的训练。首先需要下载CCPD数据集，然后使用提供的工具脚本将其转换为YOLO训练所需的格式。
@@ -51,7 +53,7 @@ python  install_dependencies.py
 ### CCPD数据集处理
 
 ```bash
-python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./train --train_ratio 0.8
+python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./data/yolo --train_ratio 0.8
 ```
 
 参数说明：
@@ -86,7 +88,7 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 5 -
 LPRNet的训练脚本已经存在于项目中，可以使用以下命令进行训练：
 
 ```bash
-python train_LPRNet.py --train_img_dirs ./data/train --test_img_dirs ./data/test --pretrained_model ./weights/pretrained_LPRNet_model.pth
+python train_LPRNet.py --train_img_dirs ./data/train --test_img_dirs ./data/test --pretrained_model ./weights/Final_LPRNet_model.pth
 ```
 
 ## 模型测试与演示

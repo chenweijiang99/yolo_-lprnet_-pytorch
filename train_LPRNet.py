@@ -2,8 +2,8 @@
 # /usr/bin/env/python3
 
 '''
-Pytorch implementation for LPRNet.
-Author: aiboy.wei@outlook.com .
+LPRNet车牌识别模型训练
+基于Pytorch实现
 '''
 
 from data.load_data import CHARS, CHARS_DICT, LPRDataLoader
@@ -32,7 +32,7 @@ def sparse_tuple_for_ctc(T_length, lengths):
 
 def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
     """
-    Sets the learning rate
+    配置学习率
     """
     lr = 0
     for i, e in enumerate(lr_schedule):
@@ -47,28 +47,28 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
     return lr
 
 def get_parser():
-    parser = argparse.ArgumentParser(description='parameters to train net')
-    parser.add_argument('--max_epoch', default=15, help='epoch to train the network')
-    parser.add_argument('--img_size', default=[94, 24], help='the image size')
-    parser.add_argument('--train_img_dirs', default="~/workspace/trainMixLPR", help='the train images path')
-    parser.add_argument('--test_img_dirs', default="~/workspace/testMixLPR", help='the test images path')
-    parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
-    parser.add_argument('--learning_rate', default=0.1, help='base value of learning rate.')
-    parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
-    parser.add_argument('--train_batch_size', default=128, help='training batch size.')
-    parser.add_argument('--test_batch_size', default=120, help='testing batch size.')
-    parser.add_argument('--phase_train', default=True, type=bool, help='train or test phase flag.')
-    parser.add_argument('--num_workers', default=8, type=int, help='Number of workers used in dataloading')
-    parser.add_argument('--cuda', default=True, type=bool, help='Use cuda to train model')
-    parser.add_argument('--resume_epoch', default=0, type=int, help='resume iter for retraining')
-    parser.add_argument('--save_interval', default=2000, type=int, help='interval for save model state dict')
-    parser.add_argument('--test_interval', default=2000, type=int, help='interval for evaluate')
-    parser.add_argument('--momentum', default=0.9, type=float, help='momentum')
-    parser.add_argument('--weight_decay', default=2e-5, type=float, help='Weight decay for SGD')
-    parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16], help='schedule for learning rate.')
-    parser.add_argument('--save_folder', default='./weights/', help='Location to save checkpoint models')
+    parser = argparse.ArgumentParser(description='LPRNet车牌识别模型训练')
+    parser.add_argument('--max_epoch', default=15, help='训练轮数')
+    parser.add_argument('--img_size', default=[94, 24], help='输入图像尺寸')
+    parser.add_argument('--train_img_dirs', default="./data/test", help='训练图像目录')
+    parser.add_argument('--test_img_dirs', default="./data/test", help='测试图像目录')
+    parser.add_argument('--dropout_rate', default=0.5, help='Dropout率')
+    parser.add_argument('--learning_rate', default=0.1, help='学习率')
+    parser.add_argument('--lpr_max_len', default=8, help='车牌最大长度')
+    parser.add_argument('--train_batch_size', default=128, help='训练批量大小')
+    parser.add_argument('--test_batch_size', default=120, help='测试批量大小')
+    parser.add_argument('--phase_train', default=True, type=bool, help='训练或测试阶段标志')
+    parser.add_argument('--num_workers', default=8, type=int, help='数据加载时使用的工作线程数')
+    parser.add_argument('--cuda', default=True, type=bool, help='是否使用CUDA加速训练')
+    parser.add_argument('--resume_epoch', default=0, type=int, help='从指定轮数继续训练')
+    parser.add_argument('--save_interval', default=2000, type=int, help='保存模型状态字典的间隔')
+    parser.add_argument('--test_interval', default=2000, type=int, help='评估模型的间隔')
+    parser.add_argument('--momentum', default=0.9, type=float, help='动量因子')
+    parser.add_argument('--weight_decay', default=2e-5, type=float, help='权重衰减因子')
+    parser.add_argument('--lr_schedule', default=[4, 8, 12, 14, 16], help='学习率衰减 schedule')
+    parser.add_argument('--save_folder', default='./weights/', help='模型保存目录')
     # parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='pretrained base model')
-    parser.add_argument('--pretrained_model', default='', help='pretrained base model')
+    parser.add_argument('--pretrained_model', default='', help='预训练模型路径')
 
     args = parser.parse_args()
 
@@ -83,7 +83,7 @@ def collate_fn(batch):
         imgs.append(torch.from_numpy(img))
         labels.extend(label)
         lengths.append(length)
-    labels = np.asarray(labels).flatten().astype(np.int)
+    labels = np.asarray(labels).flatten().astype(np.int_)
 
     return (torch.stack(imgs, 0), torch.from_numpy(labels), lengths)
 
@@ -100,12 +100,12 @@ def train():
     lprnet = build_lprnet(lpr_max_len=args.lpr_max_len, phase=args.phase_train, class_num=len(CHARS), dropout_rate=args.dropout_rate)
     device = torch.device("cuda:0" if args.cuda else "cpu")
     lprnet.to(device)
-    print("Successful to build network!")
+    print("成功构建网络!")
 
-    # load pretrained model
+    # 加载预训练模型
     if args.pretrained_model:
-        lprnet.load_state_dict(torch.load(args.pretrained_model))
-        print("load pretrained model successful!")
+        lprnet.load_state_dict(torch.load(args.pretrained_model, weights_only=True))
+        print("成功加载预训练模型!")
     else:
         def xavier(param):
             nn.init.xavier_uniform(param)
@@ -122,9 +122,9 @@ def train():
 
         lprnet.backbone.apply(weights_init)
         lprnet.container.apply(weights_init)
-        print("initial net weights successful!")
+        print("成功初始化网络权重!")
 
-    # define optimizer
+    # 配置优化器
     # optimizer = optim.SGD(lprnet.parameters(), lr=args.learning_rate,
     #                       momentum=args.momentum, weight_decay=args.weight_decay)
     optimizer = optim.RMSprop(lprnet.parameters(), lr=args.learning_rate, alpha = 0.9, eps=1e-08,
@@ -192,15 +192,18 @@ def train():
         loss_val += loss.item()
         end_time = time.time()
         if iteration % 20 == 0:
-            print('Epoch:' + repr(epoch) + ' || epochiter: ' + repr(iteration % epoch_size) + '/' + repr(epoch_size)
-                  + '|| Totel iter ' + repr(iteration) + ' || Loss: %.4f||' % (loss.item()) +
-                  'Batch time: %.4f sec. ||' % (end_time - start_time) + 'LR: %.8f' % (lr))
+            print('轮次:' + repr(epoch) + ' || 轮次迭代: ' + repr(iteration % epoch_size) + '/' + repr(epoch_size)
+                  + '|| 总迭代数 ' + repr(iteration) + ' || 损失: %.4f||' % (loss.item()) +
+                  '批次时间: %.4f 秒 ||' % (end_time - start_time) + '学习率: %.8f' % (lr))
     # final test
-    print("Final test Accuracy:")
+    print("最终测试准确率:")
     Greedy_Decode_Eval(lprnet, test_dataset, args)
 
     # save final parameters
-    torch.save(lprnet.state_dict(), args.save_folder + 'Final_LPRNet_model.pth')
+    # 为最终模型文件名添加时间戳，避免覆盖之前的模型
+    import datetime
+    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+    torch.save(lprnet.state_dict(), args.save_folder + f'Final_LPRNet_model_{timestamp}.pth')
 
 def Greedy_Decode_Eval(Net, datasets, args):
     # TestNet = Net.eval()
@@ -259,9 +262,9 @@ def Greedy_Decode_Eval(Net, datasets, args):
                 Tn_2 += 1
 
     Acc = Tp * 1.0 / (Tp + Tn_1 + Tn_2)
-    print("[Info] Test Accuracy: {} [{}:{}:{}:{}]".format(Acc, Tp, Tn_1, Tn_2, (Tp+Tn_1+Tn_2)))
+    print("[信息] 测试准确率: {} [{}:{}:{}:{}]" .format(Acc, Tp, Tn_1, Tn_2, (Tp+Tn_1+Tn_2)))
     t2 = time.time()
-    print("[Info] Test Speed: {}s 1/{}]".format((t2 - t1) / len(datasets), len(datasets)))
+    print("[信息] 测试速度: {}秒 1/{}]" .format((t2 - t1) / len(datasets), len(datasets)))
 
 
 if __name__ == "__main__":

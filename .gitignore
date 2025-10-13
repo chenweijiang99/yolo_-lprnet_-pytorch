@@ -2,6 +2,7 @@ __pycache__
 
 data/CCPD
 data/__pycache__
+data/yolo
 
 model/__pycache__
 

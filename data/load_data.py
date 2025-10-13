@@ -80,7 +80,7 @@ class LPRDataLoader(Dataset):
     def check(self, label):
         if label[2] != CHARS_DICT['D'] and label[2] != CHARS_DICT['F'] \
                 and label[-1] != CHARS_DICT['D'] and label[-1] != CHARS_DICT['F']:
-            print("Error label, Please check!")
+            print("标签错误，请检查!")
             return False
         else:
             return True

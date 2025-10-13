@@ -2,8 +2,8 @@
 # /usr/bin/env/python3
 
 '''
-test pretrained model.
-Author: aiboy.wei@outlook.com .
+测试LPRNet模型
+
 '''
 
 from data.load_data import CHARS, CHARS_DICT, LPRDataLoader

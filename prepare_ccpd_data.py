@@ -144,7 +144,7 @@ class CCPDProcessor:
 def get_parser():
     parser = argparse.ArgumentParser(description='CCPD数据集处理工具')
     parser.add_argument('--ccpd_root', required=True, help='CCPD数据集根目录')
-    parser.add_argument('--output_dir', default='./data/CCPD', help='输出目录')
+    parser.add_argument('--output_dir', default='./train', help='输出目录')
     parser.add_argument('--train_ratio', default=0.8, type=float, help='训练集比例')
     
     return parser

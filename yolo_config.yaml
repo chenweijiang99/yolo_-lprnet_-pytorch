@@ -1,8 +1,8 @@
 # YOLOv8配置文件 - 车牌检测
 
 # 数据集配置
-train: ./train/images/train  # 训练集图像路径
-val: ./train/images/val      # 验证集图像路径
+train: ./data/yolo/images/train  # 训练集图像路径
+val: ./data/yolo/images/val      # 验证集图像路径
 
 # 类别配置
 names:
