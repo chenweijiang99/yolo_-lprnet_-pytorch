@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 集成YOLO车牌检测和LPRNet字符识别的演示脚本

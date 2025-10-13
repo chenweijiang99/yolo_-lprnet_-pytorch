@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+
 
 """
 车牌识别系统的图形用户界面
@@ -131,13 +130,13 @@ class VideoProcessingThread(QThread):
                     draw = ImageDraw.Draw(result_frame_pil)
                     # 尝试加载中文字体
                     try:
-                        # Windows系统默认字体
-                        font = ImageFont.truetype("simhei.ttf", 16)
+                        # Windows系统默认字体 - 增大字体大小以提高可读性
+                        font = ImageFont.truetype("simhei.ttf", 36)
                     except:
                         # 如果找不到指定字体，使用默认字体
                         font = ImageFont.load_default()
                     # 绘制文本
-                    draw.text((x1, y1 - 20), label, font=font, fill=(255, 0, 0))
+                    draw.text((x1, y1 - 36), label, font=font, fill=(255, 0, 0))
                     # 将PIL图像转换回OpenCV图像
                     result_frame = cv2.cvtColor(np.array(result_frame_pil), cv2.COLOR_RGB2BGR)
                 except:
@@ -591,13 +590,13 @@ class PlateRecognitionGUI(QMainWindow):
                     draw = ImageDraw.Draw(result_image_pil)
                     # 尝试加载中文字体
                     try:
-                        # Windows系统默认字体
-                        font = ImageFont.truetype("simhei.ttf", 16)
+                        # Windows系统默认字体 - 增大字体大小以提高可读性
+                        font = ImageFont.truetype("simhei.ttf", 36)
                     except:
                         # 如果找不到指定字体，使用默认字体
                         font = ImageFont.load_default()
                     # 绘制文本
-                    draw.text((x1, y1 - 20), label, font=font, fill=(255, 0, 0))
+                    draw.text((x1, y1 - 36), label, font=font, fill=(255, 0, 0))
                     # 将PIL图像转换回OpenCV图像
                     result_image = cv2.cvtColor(np.array(result_image_pil), cv2.COLOR_RGB2BGR)
                 except:
