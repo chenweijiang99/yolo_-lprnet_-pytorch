@@ -259,6 +259,7 @@ class PlateRecognitionGUI(QMainWindow):
         self.recognizer = None  # LPRNet识别器
         self.processing_thread = None  # 视频处理线程
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'  # 运行设备
+        self.current_video_path = None  # 当前选择的视频文件路径
 
         # 初始化UI
         self.init_ui()
@@ -382,7 +383,7 @@ class PlateRecognitionGUI(QMainWindow):
         try:
             # 尝试自动查找模型文件
             yolo_model_path = self.find_model_file(['./runs/train/yolo_lpr/weights/best.pt', './yolo11n.pt', './yolov8n.pt'])
-            lpr_model_path = self.find_model_file(['./weights/Final_LPRNet_model.pth'])
+            lpr_model_path = self.find_model_file(['./weights/Final_LPRNet_model_20251012_150100.pth'])
 
             # 初始化YOLO检测器
             self.detector = YOLOPlateDetector(yolo_model_path)
@@ -461,6 +462,8 @@ class PlateRecognitionGUI(QMainWindow):
             self, "选择视频", ".", "视频文件 (*.mp4 *.avi *.mov *.mkv)")
 
         if file_path:
+            # 保存当前选择的视频文件路径
+            self.current_video_path = file_path
             try:
                 # 显示进度条
                 self.progress_bar.setVisible(True)
@@ -519,6 +522,15 @@ class PlateRecognitionGUI(QMainWindow):
             self.processing_thread.stop()
             self.processing_thread = None
 
+        # 清空当前选择的视频文件路径
+        self.current_video_path = None
+
+        # 重置图像标签显示初始提示文本
+        self.image_label.setText("请选择图片、视频或打开摄像头")
+
+        # 清空识别结果
+        self.result_text.clear()
+        
         # 更新按钮状态
         self.update_button_states(False)
         self.progress_bar.setVisible(False)
