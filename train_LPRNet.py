@@ -48,10 +48,10 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
 
 def get_parser():
     parser = argparse.ArgumentParser(description='LPRNet车牌识别模型训练')
-    parser.add_argument('--max_epoch', default=15, help='训练轮数')
+    parser.add_argument('--max_epoch', default=15, type=int, help='训练轮数')
     parser.add_argument('--img_size', default=[94, 24], help='输入图像尺寸')
-    parser.add_argument('--train_img_dirs', default="./data/test", help='训练图像目录')
-    parser.add_argument('--test_img_dirs', default="./data/test", help='测试图像目录')
+    parser.add_argument('--train_img_dirs', default="./data/lprnet/train", help='训练图像目录')
+    parser.add_argument('--test_img_dirs', default="./data/lprnet/test", help='测试图像目录')
     parser.add_argument('--dropout_rate', default=0.5, help='Dropout率')
     parser.add_argument('--learning_rate', default=0.1, help='学习率')
     parser.add_argument('--lpr_max_len', default=8, help='车牌最大长度')
