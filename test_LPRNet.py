@@ -28,7 +28,7 @@ def get_parser():
     """
     parser = argparse.ArgumentParser(description='训练网络的参数')
     parser.add_argument('--img_size', default=[94, 24], help='图像尺寸')
-    parser.add_argument('--test_img_dirs', default="./data/test", help='测试图像路径')
+    parser.add_argument('--test_img_dirs', default="./data/lprnet/test", help='测试图像路径')
     parser.add_argument('--dropout_rate', default=0, help='dropout率')
     parser.add_argument('--lpr_max_len', default=8, help='车牌号最大长度')
     parser.add_argument('--test_batch_size', default=100, help='测试批次大小')

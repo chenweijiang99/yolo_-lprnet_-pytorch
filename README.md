@@ -117,15 +117,14 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 50 
 ### 3. 训练LPRNet字符识别模型
 
 ```bash
-python train_LPRNet.py --train_img_dirs ./data/train --test_img_dirs ./data/test --epochs 100 --batch_size 32
+python train_LPRNet.py
 ```
 
 参数说明：
 - `--train_img_dirs`: 训练图像目录
 - `--test_img_dirs`: 测试图像目录
-- `--epochs`: 训练轮数
-- `--batch_size`: 批次大小
-- `--pretrained_model`: 预训练模型路径（可选）
+- `--max_epoch`: 训练轮数
+- `--pretrained_model`: 预训练模型路径
 
 ## 测试与评估
 
@@ -146,7 +145,7 @@ python test_yolo.py --model ./weights/best.pt --input ./images/test.jpg --save
 ### 2. LPRNet字符识别测试
 
 ```bash
-python test_LPRNet.py --pretrained_model ./weights/Final_LPRNet_model.pth --test_img_dirs ./data/test
+python test_LPRNet.py
 ```
 
 ### 3. 集成系统测试
