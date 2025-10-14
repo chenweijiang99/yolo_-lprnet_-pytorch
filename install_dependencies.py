@@ -200,6 +200,7 @@ def install_dependencies():
             "imutils>=0.5.4",
             "tqdm>=4.60.0",
             "PySide6>=6.3.0",
+            "pybaseutils>=1.0.0",
         ]
     
     # 检查并显示每个依赖的状态

@@ -84,20 +84,24 @@ python main.py
 
 如果您需要训练自己的模型或微调现有模型，可以按照以下步骤进行：
 
-### 1. 准备数据集
+
+
+
+### 1. 训练YOLO车牌检测模型
+
+#### 1. 准备数据集
 
 本项目推荐使用CCPD（中国城市停车数据集）进行训练。首先需要下载CCPD数据集，然后使用提供的工具脚本将其转换为YOLO训练所需的格式：
 
 ```bash
 python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./data/yolo --train_ratio 0.8
 ```
-
 参数说明：
 - `--ccpd_root`: CCPD数据集的根目录
 - `--output_dir`: 处理后数据的输出目录
 - `--train_ratio`: 训练集比例（剩余部分为验证集）
 
-### 2. 训练YOLO车牌检测模型
+#### 2. 执行YOLO训练脚本
 
 ```bash
 python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 50 --batch_size 16 --img_size 640
@@ -110,11 +114,24 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 50 
 - `--batch_size`: 批次大小
 - `--img_size`: 输入图像大小
 - `--lr0`: 初始学习率（可选）
+- `--project`: 训练结果保存路径（默认`./runs/train/yolo_lpr`）
 - `--device`: 训练设备（可选，留空自动选择GPU或CPU）
 
 训练完成后，模型权重将保存在`./runs/train/yolo_lpr/weights/`目录下。
 
-### 3. 训练LPRNet字符识别模型
+### 2. 训练LPRNet字符识别模型
+
+#### 1. 准备数据集
+
+```bash
+python extract_ccpd_plates.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green/train --output_dir ./data/lprnet  --model_path ./weights/best.pt 
+```
+参数说明：
+- `--ccpd_root`: CCPD数据集的根目录
+- `--output_dir`: 处理后数据的输出目录
+- `--model_path`: 使用的YOLO模型权重路径
+
+#### 2. 执行LPRNet训练脚本
 
 ```bash
 python train_LPRNet.py

@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
+
 """
 CCPD车牌提取工具
 使用YOLO模型检测CCPD数据集中的车牌并裁剪保存为单独的图片，用于LPRNet训练
 
-代码需要用到pybaseutils工具，请使用pip安装即可：pip install pybaseutils
 """
 
 import os
