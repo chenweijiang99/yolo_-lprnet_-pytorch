@@ -36,7 +36,7 @@ def get_parser():
     parser.add_argument('--num_workers', default=8, type=int, help='数据加载使用的工作进程数')
     parser.add_argument('--cuda', default=True, type=bool, help='是否使用cuda训练模型')
     parser.add_argument('--show', default=False, type=bool, help='是否显示测试图像及其预测结果')
-    parser.add_argument('--pretrained_model', default='./weights/Final_LPRNet_model.pth', help='预训练基础模型')
+    parser.add_argument('--pretrained_model', default='./weights/LPRNet_20251014142735.pth', help='预训练基础模型')
 
     args = parser.parse_args()
     return args
@@ -119,9 +119,9 @@ def Greedy_Decode_Eval(Net, datasets, args):
         targets = []
         for length in lengths:
             label = labels[start:start+length]
-            targets.append(label)
+            targets.append(label.numpy())  # 直接转换为numpy数组并添加到列表中
             start += length
-        targets = np.array([el.numpy() for el in targets])
+        # 不再尝试将不同长度的序列转换为一个numpy数组，而是保留为列表
         imgs = images.numpy().copy()
 
         # 将数据移到GPU（如果可用）
@@ -163,7 +163,8 @@ def Greedy_Decode_Eval(Net, datasets, args):
             if len(label) != len(targets[i]):
                 Tn_1 += 1
                 continue
-            if (np.asarray(targets[i]) == np.asarray(label)).all():
+            # targets[i]已经是numpy数组，不需要再次转换
+            if (targets[i] == np.asarray(label)).all():
                 Tp += 1
             else:
                 Tn_2 += 1
