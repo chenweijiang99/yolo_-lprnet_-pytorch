@@ -95,7 +95,7 @@ python main.py
 
 #### 1. 准备数据集
 
-本项目推荐使用CCPD（中国城市停车数据集）进行训练。首先需要下载CCPD数据集https://github.com/detectRecog/CCPD，然后使用提供的工具脚本将其转换为YOLO训练所需的格式：
+本项目推荐使用CCPD（中国城市停车数据集）进行训练。首先需要下载CCPD数据集(https://github.com/detectRecog/CCPD)，然后使用提供的工具脚本将其转换为YOLO训练所需的格式：
 
 ```bash
 python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./data/yolo --train_ratio 0.8
