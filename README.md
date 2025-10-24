@@ -86,7 +86,7 @@ python main.py
 
 ## 模型训练（可选）
 
-如果您需要训练自己的模型或微调现有模型，可以按照以下步骤进行：
+如果您需要训练自己的模型或微调现有模型（本项目模型用的ccpd2020的数据训练的YOLO和LPRnet），可以按照以下步骤进行：
 
 
 
@@ -95,7 +95,7 @@ python main.py
 
 #### 1. 准备数据集
 
-本项目推荐使用CCPD（中国城市停车数据集）进行训练。首先需要下载CCPD数据集，然后使用提供的工具脚本将其转换为YOLO训练所需的格式：
+本项目推荐使用CCPD（中国城市停车数据集）进行训练。首先需要下载CCPD数据集https://github.com/detectRecog/CCPD，然后使用提供的工具脚本将其转换为YOLO训练所需的格式：
 
 ```bash
 python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./data/yolo --train_ratio 0.8
