@@ -2,9 +2,9 @@
 
 一个基于深度学习的中文车牌识别系统，集成了YOLO目标检测和LPRNet字符识别技术，能够从图像、视频或实时摄像头流中自动检测并识别车牌信息。
 
-图片检测效果：![输入图片说明](images/run_image.png)
+图片检测效果：![图片检测](images/run_image.png)
 
-视频检测效果：![输入图片说明](images/run_video.png)
+视频检测效果：![视频检测](images/run_video.png)
 
 ## 项目特点
 
