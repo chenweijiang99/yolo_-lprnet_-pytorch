@@ -381,7 +381,7 @@ class PlateRecognitionGUI(QMainWindow):
         """加载YOLO和LPRNet模型"""
         try:
             # 尝试自动查找模型文件
-            yolo_model_path = self.find_model_file(['./runs/train/yolo_lpr/weights/best.pt', './yolo11n.pt', './yolov8n.pt'])
+            yolo_model_path = self.find_model_file(['./weights/best.pt', './yolo11n.pt', './yolov8n.pt'])
             lpr_model_path = self.find_model_file(['./weights/LPRNet_20251014142735.pth'])
 
             # 初始化YOLO检测器
