@@ -61,6 +61,56 @@ def check_gpu():
         print(f"检查GPU时出错: {e}")
         return "cpu"
 
+def get_cuda_version():
+    """获取系统的CUDA版本"""
+    try:
+        if is_windows():
+            # 在Windows上使用nvidia-smi命令获取CUDA版本
+            try:
+                result = subprocess.run(
+                    ["nvidia-smi"],
+                    capture_output=True, text=True
+                )
+                if result.returncode == 0:
+                    # 从输出中提取CUDA版本
+                    for line in result.stdout.split('\n'):
+                        if "CUDA Version:" in line:
+                            # 提取版本号，例如 "CUDA Version: 12.6" -> "12.6"
+                            version_str = line.split("CUDA Version:")[1].strip()
+                            # 提取主版本和次版本，例如 "12.6" -> "cu126"
+                            if version_str:
+                                parts = version_str.split('.')
+                                if len(parts) >= 2:
+                                    return f"cu{parts[0]}{parts[1]}"
+            except FileNotFoundError:
+                pass
+        else:
+            # 在Linux上使用nvidia-smi命令获取CUDA版本
+            try:
+                result = subprocess.run(
+                    ["nvidia-smi"],
+                    capture_output=True, text=True
+                )
+                if result.returncode == 0:
+                    # 从输出中提取CUDA版本
+                    for line in result.stdout.split('\n'):
+                        if "CUDA Version:" in line:
+                            # 提取版本号，例如 "CUDA Version: 12.6" -> "12.6"
+                            version_str = line.split("CUDA Version:")[1].strip()
+                            # 提取主版本和次版本，例如 "12.6" -> "cu126"
+                            if version_str:
+                                parts = version_str.split('.')
+                                if len(parts) >= 2:
+                                    return f"cu{parts[0]}{parts[1]}"
+            except FileNotFoundError:
+                pass
+        
+        # 如果无法检测到CUDA版本，返回默认版本
+        return "cu126"
+    except Exception as e:
+        print(f"获取CUDA版本时出错: {e}")
+        return "cu126"
+
 
 def check_package(package_name):
     """检查Python包是否已安装"""
@@ -132,6 +182,41 @@ def run_command(command, description):
         return False
 
 
+def install_pytorch(device_type):
+    """根据设备类型自动安装PyTorch和torchvision"""
+    print(f"\n检测到设备类型: {device_type}")
+    print("正在安装PyTorch和torchvision...")
+    
+    try:
+        # 构建安装命令
+        if device_type == "cuda":
+            # NVIDIA GPU用户 - 根据系统CUDA版本安装
+            cuda_version = get_cuda_version()
+            print(f"检测到CUDA版本: {cuda_version}")
+            if is_windows():
+                command = [sys.executable, "-m", "pip", "install", "torch", "torchvision", "--index-url", f"https://download.pytorch.org/whl/{cuda_version}"]
+            else:
+                command = [sys.executable, "-m", "pip", "install", "torch", "torchvision", "--index-url", f"https://download.pytorch.org/whl/{cuda_version}"]
+        elif device_type == "mps" and is_macos():
+            # Apple Silicon用户
+            command = [sys.executable, "-m", "pip", "install", "torch", "torchvision"]
+        else:
+            # CPU用户
+            command = [sys.executable, "-m", "pip", "install", "torch", "torchvision"]
+        
+        # 执行安装命令
+        if run_command(command, "安装PyTorch和torchvision"):
+            print("\nPyTorch和torchvision安装成功！")
+            return True
+        else:
+            print("\nPyTorch和torchvision安装失败，请手动安装。")
+            show_pytorch_install_commands(device_type)
+            return False
+    except Exception as e:
+        print(f"安装PyTorch时出错: {e}")
+        show_pytorch_install_commands(device_type)
+        return False
+
 def show_pytorch_install_commands(device_type):
     """显示PyTorch和torchvision的安装命令"""
     print(f"\n检测到设备类型: {device_type}")
@@ -139,20 +224,21 @@ def show_pytorch_install_commands(device_type):
     print("根据您的设备类型，推荐使用以下命令安装:")
     
     if device_type == "cuda":
-        # NVIDIA GPU用户
-        print("\n对于NVIDIA GPU (CUDA):")
+        # NVIDIA GPU用户 - 根据系统CUDA版本显示命令
+        cuda_version = get_cuda_version()
+        print(f"\n对于NVIDIA GPU (CUDA {cuda_version}):")
         print("Windows系统:")
-        print("pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html")
-        print("Linux/macOS系统:")
-        print("pip install torch==1.7.1+cu101 torchvision==0.8.2+cu101 torchaudio==0.7.2 -f https://download.pytorch.org/whl/torch_stable.html")
+        print(f"pip install torch torchvision --index-url https://download.pytorch.org/whl/{cuda_version}")
+        print("Linux系统:")
+        print(f"pip install torch torchvision --index-url https://download.pytorch.org/whl/{cuda_version}")
     elif device_type == "mps" and is_macos():
         # Apple Silicon用户
         print("\n对于Apple Silicon (M1/M2/M3) 芯片:")
-        print("pip install torch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2")
+        print("pip install torch torchvision")
     else:
         # CPU用户
         print("\n对于CPU版本:")
-        print("pip install torch==1.7.1 torchvision==0.8.2 torchaudio==0.7.2 -f https://download.pytorch.org/whl/cpu")
+        print("pip install torch torchvision")
     
     print("\n注意: 以上命令可能需要根据您的系统和CUDA版本进行调整。")
     print("建议访问官方网站获取最新的安装命令: https://pytorch.org/get-started/locally/")
@@ -170,8 +256,8 @@ def install_dependencies():
         return False
     
     print("\n==== 依赖状态检查 ====")
-    print("✅ PyTorch 已安装")
-    print("✅ torchvision 已安装")
+    print("[OK] PyTorch 已安装")
+    print("[OK] torchvision 已安装")
     
     # 获取需要安装的依赖列表
     dependencies_to_install = []
@@ -226,15 +312,17 @@ def install_dependencies():
             check_name = "cv2"
         elif package_name == "pillow":
             check_name = "PIL"
+        elif package_name == "PySide6":
+            check_name = "PySide6"
         else:
             check_name = package_name.lower()
         
         if check_package(check_name):
             installed_packages.append(dep)
-            print(f"✅ {dep} 已安装")
+            print(f"[OK] {dep} 已安装")
         else:
             packages_to_install.append(dep)
-            print(f"⚠️ {dep} 未安装，将进行安装")
+            print(f"[WARN] {dep} 未安装，将进行安装")
     
     # 如果有需要安装的依赖
     if packages_to_install:
@@ -278,8 +366,8 @@ def install_dependencies():
         return False
     
     print("\n==== 依赖安装总结 ====")
-    print(f"✅ 已安装的依赖: {len(installed_packages)} 个")
-    print(f"✅ 新安装的依赖: {len(packages_to_install)} 个")
+    print(f"[OK] 已安装的依赖: {len(installed_packages)} 个")
+    print(f"[OK] 新安装的依赖: {len(packages_to_install)} 个")
     print("所有依赖项安装成功！")
     return True
 
@@ -311,11 +399,11 @@ def setup_environment():
     # 检测设备是否支持CUDA
     gpu_type = check_gpu()
     if gpu_type == "cuda":
-        print("✅ 检测到NVIDIA GPU，支持CUDA加速")
+        print("[OK] 检测到NVIDIA GPU，支持CUDA加速")
     elif gpu_type == "mps" and is_macos():
-        print("✅ 检测到Apple Silicon芯片，支持MPS加速")
+        print("[OK] 检测到Apple Silicon芯片，支持MPS加速")
     else:
-        print("⚠️ 未检测到可用的GPU加速，将使用CPU模式")
+        print("[WARN] 未检测到可用的GPU加速，将使用CPU模式")
     
     if args.force:
         print("强制重新安装所有依赖")
@@ -329,8 +417,8 @@ def setup_environment():
     # 检查PyTorch和torchvision是否已安装
     if not check_package("torch") or not check_package("torchvision"):
         device_type = args.device if args.device != 'auto' else check_gpu()
-        show_pytorch_install_commands(device_type)
-        return 1
+        if not install_pytorch(device_type):
+            return 1
     
     # 安装其他依赖
     if install_dependencies():

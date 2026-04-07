@@ -390,7 +390,7 @@ class PlateRecognitionGUI(QMainWindow):
             # 加载LPRNet模型
             self.recognizer = build_lprnet(lpr_max_len=8, phase=False, class_num=len(CHARS), dropout_rate=0.5)
             self.recognizer.to(self.device)
-            self.recognizer.load_state_dict(torch.load(lpr_model_path, weights_only=True))
+            self.recognizer.load_state_dict(torch.load(lpr_model_path, weights_only=True, map_location=self.device))
             self.recognizer.eval()
 
             self.log_message(f"成功加载YOLO模型: {yolo_model_path}")
