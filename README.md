@@ -6,6 +6,16 @@
 
 视频检测效果：![视频检测](images/run_video.png)
 
+## 训练截图
+
+![训练截图](yolo_train_results/results.png)
+
+![训练截图](yolo_train_results/labels.jpg)
+
+
+
+
+
 ## 项目特点
 
 - **精准检测**：采用YOLO系列模型（支持v8/v11）准确定位车牌位置
@@ -42,6 +52,7 @@ YOLO_LPRNet_Pytorch/
 ├── weights/                      # 模型权重存储目录
 │   ├── Final_LPRNet_model.pth    # LPRNet预训练权重
 │   └── best.pt                   # YOLO训练后最佳权重
+├── yolo_train_results/           # YOLO训练结果
 ├── yolo_utils.py                 # YOLO工具函数
 ├── yolo_config.yaml              # YOLO配置文件
 ├── yolo11n.pt                    # YOLOv11预训练模型
@@ -59,6 +70,7 @@ python install_dependencies.py
 ```
 
 主要依赖包括：
+
 - torch >= 1.7.1 (PyTorch深度学习框架)
 - torchvision >= 0.8.2 (PyTorch视觉库)
 - opencv-python >= 4.5.0 (图像处理)
@@ -79,6 +91,7 @@ python main.py
 ### 3. 功能使用
 
 程序启动后，您可以：
+
 - 点击"选择图片"按钮，选择单张图片进行车牌识别
 - 点击"选择视频"按钮，选择视频文件进行车牌识别
 - 点击"打开摄像头"按钮，使用摄像头进行实时车牌识别
@@ -87,7 +100,6 @@ python main.py
 ## 模型训练（可选）
 
 如果您需要训练自己的模型或微调现有模型（本项目模型用的ccpd2020的数据训练的YOLO和LPRnet），可以按照以下步骤进行：
-
 
 
 
@@ -100,7 +112,9 @@ python main.py
 ```bash
 python prepare_ccpd_data.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green --output_dir ./data/yolo --train_ratio 0.8
 ```
+
 参数说明：
+
 - `--ccpd_root`: CCPD数据集的根目录
 - `--output_dir`: 处理后数据的输出目录
 - `--train_ratio`: 训练集比例（剩余部分为验证集）
@@ -112,6 +126,7 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 50 
 ```
 
 参数说明：
+
 - `--model`: 预训练模型路径或名称（支持yolov8n、yolov8s、yolo11n等）
 - `--config`: YOLO配置文件路径
 - `--epochs`: 训练轮数
@@ -130,7 +145,9 @@ python train_yolo.py --model yolov8n.pt --config ./yolo_config.yaml --epochs 50 
 ```bash
 python extract_ccpd_plates.py --ccpd_root ./data/CCPD/CCPD2020/ccpd_green/train --output_dir ./data/lprnet  --model_path ./weights/best.pt 
 ```
+
 参数说明：
+
 - `--ccpd_root`: CCPD数据集的根目录
 - `--output_dir`: 处理后数据的输出目录
 - `--model_path`: 使用的YOLO模型权重路径
@@ -142,6 +159,7 @@ python train_LPRNet.py
 ```
 
 参数说明：
+
 - `--train_img_dirs`: 训练图像目录
 - `--test_img_dirs`: 测试图像目录
 - `--max_epoch`: 训练轮数
@@ -156,6 +174,7 @@ python test_yolo.py --model ./weights/best.pt --input ./images/test.jpg --save
 ```
 
 参数说明：
+
 - `--model`: 训练好的YOLO模型路径
 - `--input`: 输入图像或视频路径
 - `--conf`: 置信度阈值（默认0.5）
@@ -176,6 +195,7 @@ python demo_integrated_lpr.py --yolo_model ./weights/best.pt --lpr_model ./weigh
 ```
 
 参数说明：
+
 - `--yolo_model`: YOLO模型权重路径
 - `--lpr_model`: LPRNet模型权重路径
 - `--image`: 测试图像路径
@@ -188,6 +208,7 @@ python demo_integrated_lpr.py --yolo_model ./weights/best.pt --lpr_model ./weigh
 ### 1. YOLO车牌检测
 
 YOLO（You Only Look Once）是一种单阶段目标检测算法，能够在一次前向传播中同时预测目标的位置和类别。本项目使用YOLOv8或YOLOv11模型进行车牌检测，具有以下优势：
+
 - 检测速度快，适合实时应用
 - 准确率高，能够处理不同光照、角度和背景的复杂场景
 - 支持多类别检测，可以同时识别不同类型的车牌
@@ -195,6 +216,7 @@ YOLO（You Only Look Once）是一种单阶段目标检测算法，能够在一�
 ### 2. LPRNet字符识别
 
 LPRNet是一种专为车牌识别设计的端到端深度学习模型，它直接从车牌图像中识别出完整的车牌号码，避免了传统方法中复杂的字符分割步骤。LPRNet的主要特点包括：
+
 - 采用CNN架构提取特征
 - 使用CTC（Connectionist Temporal Classification）损失函数处理变长序列
 - 能够有效识别中文、字母和数字的组合
@@ -203,6 +225,7 @@ LPRNet是一种专为车牌识别设计的端到端深度学习模型，它直�
 ### 3. 系统集成流程
 
 整个车牌识别系统的工作流程如下：
+
 1. 使用YOLO模型检测输入图像中的车牌位置
 2. 根据检测结果裁剪出车牌区域
 3. 将裁剪后的车牌图像送入LPRNet模型进行字符识别
@@ -220,10 +243,10 @@ LPRNet是一种专为车牌识别设计的端到端深度学习模型，它直�
 
 5. **摄像头无法打开**：检查摄像头驱动是否正常，或尝试修改摄像头索引
 
-
 ## 致谢
 
 本项目参考了多个开源项目和研究成果，特别感谢：
+
 - Ultralytics团队提供的YOLO实现
 - 所有为CCPD数据集做出贡献的研究人员
 - LPRNet的原始作者和贡献者
@@ -232,3 +255,5 @@ LPRNet是一种专为车牌识别设计的端到端深度学习模型，它直�
 
 如有任何问题或建议，请通过GitHub Issues或Pull Requests与我联系。
 或者发送邮件： 1774532899@qq.com
+
+
